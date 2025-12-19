@@ -11,9 +11,16 @@ from uuid import uuid1
 from urllib.parse import urljoin
 
 try:
-    import pkg_resources
-    version = 'v' + pkg_resources.get_distribution("kucoin-futures-python").version
-except (ModuleNotFoundError, pkg_resources.DistributionNotFound):
+    from importlib.metadata import version as get_version
+    version = 'v' + get_version("kucoin-futures-python")
+except ImportError:
+    # Python < 3.8 fallback
+    try:
+        import pkg_resources
+        version = 'v' + pkg_resources.get_distribution("kucoin-futures-python").version
+    except Exception:
+        version = 'v1.0.0'
+except Exception:
     version = 'v1.0.0'
     
 class KucoinFuturesBaseRestApi(object):
